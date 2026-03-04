@@ -87,7 +87,7 @@ resource "aws_ecs_task_definition" "app" {
     ]
 
     healthCheck = {
-      command     = ["CMD-SHELL", "curl -f http://localhost:3000/health || exit 1"]
+      command     = ["CMD-SHELL", "node -e \"require('http').get('http://localhost:3000/health', (r) => process.exit(r.statusCode === 200 ? 0 : 1))\""]
       interval    = 30
       timeout     = 5
       retries     = 3
