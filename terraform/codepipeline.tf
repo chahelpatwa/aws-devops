@@ -101,3 +101,32 @@ output "ecs_cluster_name" {
   description = "ECS cluster name"
   value       = aws_ecs_cluster.main.name
 }
+
+resource "aws_codepipeline_webhook" "github" {
+  name            = "${var.project_name}-webhook"
+  authentication  = "GITHUB_HMAC"
+  target_action   = "Source"
+  target_pipeline = aws_codepipeline.app.name
+
+  authentication_configuration {
+    secret_token = var.github_token
+  }
+
+  filter {
+    json_path    = "$.ref"
+    match_equals = "refs/heads/{Branch}"
+  }
+}
+
+resource "github_repository_webhook" "main" {
+  repository = split("/", var.github_repo)[1]
+
+  configuration {
+    url          = aws_codepipeline_webhook.github.url
+    content_type = "json"
+    insecure_ssl = false
+    secret       = var.github_token
+  }
+
+  events = ["push"]
+}
