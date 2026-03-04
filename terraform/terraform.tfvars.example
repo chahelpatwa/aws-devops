@@ -1,0 +1,5 @@
+aws_region    = "us-east-1"
+project_name  = "aws-devops"
+github_repo   = "your-username/aws-devops"
+github_branch = "main"
+github_token  = "ghp_your_token_here"
